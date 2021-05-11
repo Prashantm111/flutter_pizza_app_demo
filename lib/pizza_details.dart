@@ -438,7 +438,7 @@ class _PizzaOrderAnimationState extends State<PizzaOrderAnimation>
       curve: Interval(0.0, 0.2),
     );
 
-    _boxExitScaleAnimation = Tween(begin: 1.0, end: 1.3).animate(
+    _boxExitScaleAnimation = Tween(begin: 1.0, end: 1.35).animate(
       CurvedAnimation(
         parent: _controller,
         curve: Interval(0.5, 0.7),
@@ -505,7 +505,6 @@ class _PizzaOrderAnimationState extends State<PizzaOrderAnimation>
                         Opacity(
                           opacity: 1 - _pizzaOpacityAnimation.value,
                           child: Transform(
-                            
                             alignment: Alignment.center,
                             transform: Matrix4.identity()
                               ..scale(_pizzaScaleAnimation.value)

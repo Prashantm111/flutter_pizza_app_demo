@@ -91,6 +91,7 @@ class _PizzaIngredientItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var child = _buildChild();
+
     return isAdded
         ? child
         : Center(
@@ -101,18 +102,108 @@ class _PizzaIngredientItems extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                           blurRadius: 5.0,
-                          color: Colors.black54,
+                          color: Colors.transparent,
                           offset: Offset(0, 5.0),
                           spreadRadius: 5)
                     ],
                   ),
-                  child: child),
+                  child: ShakeWidget(
+                    child: child,
+                  )),
               data: ingredients,
               child: child,
+              onDraggableCanceled: (velocity, offset) {
+                print('DRAG CANCEL');
+              },
               onDragCompleted: () {
+                print('DRAG COMPLE');
                 HapticFeedback.lightImpact();
               },
             ),
           );
+  }
+}
+
+class ShakeWidget extends StatefulWidget {
+  final Duration duration;
+  final double deltaX;
+  final Widget child;
+  final Curve curve;
+
+  const ShakeWidget({
+    Key key,
+    this.duration = const Duration(milliseconds: 500),
+    this.deltaX = 20,
+    this.curve = Curves.bounceOut,
+    this.child,
+  }) : super(key: key);
+
+  @override
+  _ShakeWidgetState createState() => _ShakeWidgetState();
+}
+
+class _ShakeWidgetState extends State<ShakeWidget>
+    with SingleTickerProviderStateMixin {
+  /// convert 0-1 to 0-1-0
+  // double shake(double animation) =>
+  //     2 * (0.5 - (0.5 - widget.curve.transform(animation)).abs());
+  AnimationController _controller;
+  Animation<Offset> shakeAnimation;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    )..addListener(() {
+        setState(() {});
+      });
+
+    shakeAnimation = Tween<Offset>(
+      begin: const Offset(-10.0, 0.0),
+      end: const Offset(10.0, 0.0),
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    _controller.addStatusListener((status) {
+      if (_controller.status == AnimationStatus.completed) {
+        _controller.reverse();
+      }
+      if (_controller.status == AnimationStatus.dismissed) {
+        _controller.forward();
+      }
+    });
+    _controller.forward();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      child: widget.child,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: shakeAnimation.value,
+          child: child,
+        );
+      },
+    );
+
+    //  TweenAnimationBuilder<double>(
+    //   key: widget.key,
+    //   tween: Tween(begin: 0.0, end: 1.0),
+    //   duration: widget.duration,
+    //   builder: (context, animation, child) => Transform.translate(
+    //     offset: Offset(widget.deltaX * shake(animation), 0),
+    //     child: child,
+    //   ),
+    //   child: widget.child,
+    // );
   }
 }
