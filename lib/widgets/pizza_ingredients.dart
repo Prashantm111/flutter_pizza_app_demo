@@ -97,26 +97,27 @@ class _PizzaIngredientItems extends StatelessWidget {
         : Center(
             child: Draggable(
               feedback: DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 5.0,
-                          color: Colors.transparent,
-                          offset: Offset(0, 5.0),
-                          spreadRadius: 5)
-                    ],
-                  ),
-                  child: ShakeWidget(
-                    child: child,
-                  )),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 5.0,
+                        color: Colors.transparent,
+                        offset: Offset(0, 5.0),
+                        spreadRadius: 5)
+                  ],
+                ),
+                child: ShakeWidget(
+                  child: child,
+                ),
+              ),
               data: ingredients,
               child: child,
               onDraggableCanceled: (velocity, offset) {
-                print('DRAG CANCEL');
+               
               },
               onDragCompleted: () {
-                print('DRAG COMPLE');
+                
                 HapticFeedback.lightImpact();
               },
             ),

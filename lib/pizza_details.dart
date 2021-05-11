@@ -142,8 +142,6 @@ class PizzaDetailsState extends State<PizzaDetails>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bloc = PizzaOrderProvider.of(context);
       bloc.notifierPizaBoxAnimation.addListener(() {
-        print("ADD PIZZA TO CART  ${bloc.notifierPizaBoxAnimation.value}");
-
         if (bloc.notifierPizaBoxAnimation.value) {
           _addPizzaToCart();
         }
@@ -169,8 +167,6 @@ class PizzaDetailsState extends State<PizzaDetails>
         Expanded(
             child: DragTarget<Ingredients>(
           onAccept: (value) {
-            print('ACCEPTED VALUE :  $value');
-
             bloc.pizzaFocusedNotifier.value = false;
 
             bloc.addIngredients(value);
@@ -183,8 +179,6 @@ class PizzaDetailsState extends State<PizzaDetails>
             return !bloc.isExistAlready(value);
           },
           onLeave: (value) {
-            print('ON LEAVE  VALUE :  $value');
-
             bloc.pizzaFocusedNotifier.value = false;
           },
           builder: (context, candidateData, rejets) {
@@ -199,7 +193,6 @@ class PizzaDetailsState extends State<PizzaDetails>
                       child: ValueListenableBuilder<PizzaSizeState>(
                           valueListenable: bloc.pizzaSizeNotifier,
                           builder: (context, value, _) {
-                            print("LISNER : $data");
                             if (data != null) {
                               Future.microtask(() => _pizzaBoxAniation(data));
                             }
@@ -377,10 +370,9 @@ class PizzaDetailsState extends State<PizzaDetails>
 
   OverlayEntry _overlayEntry;
   void _pizzaBoxAniation(PizzaMetadata data) {
-    print("pizzaBoxAniation");
     if (null == _overlayEntry) {
       final blc = PizzaOrderProvider.of(context);
-      print("_overlayEntry");
+
       _overlayEntry = OverlayEntry(
         builder: (context) {
           return PizzaOrderAnimation(
@@ -423,7 +415,7 @@ class _PizzaOrderAnimationState extends State<PizzaOrderAnimation>
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     );
-    _pizzaScaleAnimation = Tween(begin: 1.0, end: 0.4).animate(CurvedAnimation(
+    _pizzaScaleAnimation = Tween(begin: 1.0, end: 0.3).animate(CurvedAnimation(
       parent: _controller,
       curve: Interval(0.0, 0.2),
     ));
@@ -528,11 +520,12 @@ class _PizzaOrderAnimationState extends State<PizzaOrderAnimation>
       builder: (context, constraints) {
         final boxHeight = constraints.maxHeight / 2;
         final boxWidth = constraints.maxWidth / 2;
-        print(boxWidth);
+
         final minAngle = -45.0;
         final maxAngle = -110.0;
         final boxClosingValue =
             lerpDouble(minAngle, maxAngle, 1 - _pizzaOpacityAnimation.value);
+
         return Opacity(
           opacity: _boxEnterScaleAnimation.value,
           child: Transform.scale(
